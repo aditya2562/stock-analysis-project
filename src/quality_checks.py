@@ -27,6 +27,8 @@ def clean_data(df):
 
     missing_pct = (df.isnull().mean().mul(100).round(2))
 
+    df[["Open","High","Low","Close", "Adj Close"]] = (df[["Open","High","Low","Close","Adj Close"]]).round(2)
+
     df[["Open","High","Low","Close"]] = (df[["Open","High","Low","Close"]].ffill())
 
     df = df[df["Volume"] > 0]
@@ -42,5 +44,3 @@ def clean_data(df):
     print(missing_pct)
 
     return df
-
-
