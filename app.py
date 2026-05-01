@@ -1,6 +1,6 @@
 # from src.data_loader import fetch_data, reshape_data
 # from src.quality_checks import audit_data, clean_data
-from src.analysis import load_data, calculate_returns, compute_statistics, analyze_result, plot_volatility, plot_sharpe_ratio
+from src.analysis import load_data, calculate_returns, compute_statistics, analyze_result, plot_volatility, plot_sharpe_ratio, apply_indicator, validate_indicators
 from src.config import OUTPUT_FILE
 
 def main():
@@ -25,18 +25,23 @@ def main():
 
     df = calculate_returns(df)
 
-    stats = compute_statistics(df)
+    # print("\n---- SUMMARY STATISTICS ----\n")
 
-    print("\n---- SUMMARY STATISTICS ----\n")
+    # print(stats)
 
-    print(stats)
+    # analyze_result(stats)
 
-    analyze_result(stats)
+    # plot_volatility(stats)
 
-    plot_volatility(stats)
+    # plot_sharpe_ratio(stats)
 
-    plot_sharpe_ratio(stats)
-    
+    df = apply_indicator(df)
+
+    validate_indicators(df)
+
+    df.to_csv("data/indicators.csv", index = False)
+
+    print(f"\nIndicator data saved to: data/indicators.csv")
 
 if __name__ == "__main__":
     main()

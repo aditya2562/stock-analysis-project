@@ -76,3 +76,56 @@ def plot_sharpe_ratio(stats):
     plt.savefig("data/sharpe_ratio_chart.png")
 
     plt.close()
+
+def calculate_indiacators(df):
+
+    df = df.sort_values("Date")
+
+    df["SMA_20"] = df["Close"].rolling(window=20).mean().round(2)
+    df["SMA_50"] = df["Close"].rolling(window=50).mean().round(2)
+    df["SMA_200"] = df["Close"].rolling(window=200).mean().round(2)
+
+    delta = df["Close"].diff()
+
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+
+    avg_gain = gain.ewm(com=13, adjust=False).mean()
+    avg_loss = loss.ewm(com=13, adjust=False).mean()
+
+    RS = avg_gain / avg_loss
+
+    df["RSI"] = (100 - (100 / (1 + RS))).round(2)
+
+    rolling_mean = df["Close"].rolling(window=20).mean()
+    rolling_std = df["Close"].rolling(window=20).std()
+
+    df["Bollinger_Bands_Upper"] = (rolling_mean + (2 * rolling_std)).round(2)
+    df["Bollinger_Bands_Lower"] = (rolling_mean - (2 * rolling_std)).round(2)
+
+    return df
+
+def apply_indicator(df):
+
+    df = (df.groupby("Ticker").apply(calculate_indiacators)).reset_index(level=0)
+
+    return df
+
+def validate_indicators(df):
+
+    rsi_min = df["RSI"].min()
+    rsi_max = df["RSI"].max()
+
+    print("\n--- Indicator Validation ---")
+
+    print(f"RSI Min: {rsi_min}")
+    print(f"RSI Max: {rsi_max}")
+
+    if rsi_min < 30:
+        print("RSI is below 30, indicating oversold condition")
+    if rsi_max > 70:
+        print("RSI is above 70, indicating overbought condition")
+    else:
+        print("RSI is within normal range")
+
+    return df
