@@ -1,6 +1,6 @@
 # from src.data_loader import fetch_data, reshape_data
 # from src.quality_checks import audit_data, clean_data
-from src.analysis import load_data, calculate_returns, compute_statistics, analyze_result, plot_volatility, plot_sharpe_ratio, apply_indicator, validate_indicators
+from src.analysis import load_data, calculate_returns, compute_statistics, analyze_result, plot_volatility, plot_sharpe_ratio, apply_indicator, validate_indicators, calculate_correlation, plot_correlation_heatmap, assign_sectors, compute_sector_metrics, top_correlations
 from src.config import OUTPUT_FILE
 
 def main():
@@ -35,13 +35,32 @@ def main():
 
     # plot_sharpe_ratio(stats)
 
-    df = apply_indicator(df)
+    # df = apply_indicator(df)
 
-    validate_indicators(df)
+    # validate_indicators(df)
 
-    df.to_csv("data/indicators.csv", index = False)
+    # df.to_csv("data/indicators.csv", index = False)
 
-    print(f"\nIndicator data saved to: data/indicators.csv")
+    # print(f"\nIndicator data saved to: data/indicators.csv")
+
+    correlation_matrix = calculate_correlation(df)
+
+    # plot_correlation_heatmap(correlation_matrix)
+
+    # print("\n---CORRELATION MATRIX---")
+    # print(correlation_matrix)
+
+    # df = assign_sectors(df)
+
+    # sector_stats = compute_sector_metrics(df)
+
+    # print("\n---SECTOR SUMMARY---")
+    # print(sector_stats)
+
+    top_corr = top_correlations(correlation_matrix)
+
+    print("\n---TOP CORRELATED PAIRS---")
+    print(top_corr.rename_axis(["Ticker_A", "Ticker_B"]).reset_index(name="Correlation"))
 
 if __name__ == "__main__":
     main()

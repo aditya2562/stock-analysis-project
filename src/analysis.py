@@ -1,5 +1,7 @@
+from pickle import FALSE
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 def load_data(file_path):
     
@@ -129,3 +131,75 @@ def validate_indicators(df):
         print("RSI is within normal range")
 
     return df
+
+def calculate_correlation(df):
+
+    pivot_df = df.pivot(index = "Date", columns = "Ticker", values = "Return")
+
+    correlation_matrix = pivot_df.corr()
+
+    return correlation_matrix
+
+def plot_correlation_heatmap(correlation_matrix):
+
+    plt.figure(figsize=(10,8))
+
+    sns.heatmap(
+        correlation_matrix, 
+        annot=True, 
+        fmt=".2f",
+        cmap="coolwarm",
+        linewidths=0.5
+    )
+
+    plt.title("Stocks Return Correlation Heatmap")
+
+    plt.tight_layout()
+
+    plt.savefig("data/correlation_heatmap.png")
+
+    plt.close()
+
+def assign_sectors(df):
+
+    sector_map = {
+        "HDFCBANK.NS" : "Banking",
+        "ICICIBANK.NS" : "Banking",
+        "SBIN.NS" : "Banking",
+
+        "TCS.NS": "IT",
+        "INFY.NS": "IT",
+        "WIPRO.NS": "IT",
+
+        "RELIANCE.NS": "Energy",
+        "NTPC.NS": "Energy"
+    }
+
+    df["Sector"] = df["Ticker"].map(sector_map)
+
+    return df 
+
+def compute_sector_metrics(df):
+    
+    sector_stats = df.groupby("Sector")["Return"].agg(
+        Mean_Return = "mean",
+        Volatility = "std"
+    ).round(2)
+
+    return sector_stats
+
+def top_correlations(correlation_matrix, top = 3):
+
+    correlation_unstack = correlation_matrix.unstack()
+
+    correlation_unstack = correlation_unstack[correlation_unstack.index.get_level_values(0) != correlation_unstack.index.get_level_values(1)]
+
+    correlation_unstack.index = correlation_unstack.index.map(lambda x: tuple(sorted(x)))
+
+    corr_unique = correlation_unstack[~correlation_unstack.index.duplicated()]
+
+    corr_sorted = corr_unique.sort_values(ascending=False)
+
+    top_pairs = corr_sorted.head(top)
+
+    return top_pairs
