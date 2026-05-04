@@ -2,6 +2,7 @@
 # from src.quality_checks import audit_data, clean_data
 from src.analysis import load_data, calculate_returns, compute_statistics, analyze_result, plot_volatility, plot_sharpe_ratio, apply_indicator, validate_indicators, calculate_correlation, plot_correlation_heatmap, assign_sectors, compute_sector_metrics, top_correlations
 from src.visualization import candlestick_with_volume_graph, normalised_prices_graph, risk_return_graph
+from src.report import excel_report
 from src.config import OUTPUT_FILE
 
 def main():
@@ -27,7 +28,7 @@ def main():
     df = calculate_returns(df)
 
     # print("\n---- SUMMARY STATISTICS ----\n")
-
+    stats = compute_statistics(df)
     # print(stats)
 
     # analyze_result(stats)
@@ -36,7 +37,7 @@ def main():
 
     # plot_sharpe_ratio(stats)
 
-    # df = apply_indicator(df)
+    df = apply_indicator(df)
 
     # validate_indicators(df)
 
@@ -44,7 +45,8 @@ def main():
 
     # print(f"\nIndicator data saved to: data/indicators.csv")
 
-    # correlation_matrix = calculate_correlation(df)
+    correlation_matrix = calculate_correlation(df)
+    corr_matrix = correlation_matrix.round(2)
 
     # plot_correlation_heatmap(correlation_matrix)
 
@@ -67,7 +69,9 @@ def main():
 
     # normalised_prices_graph(df)
 
-    risk_return_graph(df)
+    # risk_return_graph(df)
+
+    excel_report(df, stats, corr_matrix)
 
 if __name__ == "__main__":
     main()
