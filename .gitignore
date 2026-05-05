@@ -9,4 +9,12 @@ wheels/
 # Virtual environments
 .venv
 
+#jupyter
 .ipynb_checkpoints
+
+# OS
+.DS_Store
+
+!data/*.png
+!data/*.html
+!data/*.xlsx
