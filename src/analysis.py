@@ -1,4 +1,3 @@
-from pickle import FALSE
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -59,6 +58,8 @@ def plot_volatility(stats):
 
     plt.savefig("data/volatility_chart.png")
 
+    plt.show()
+
     plt.close()
 
 def plot_sharpe_ratio(stats):
@@ -76,6 +77,8 @@ def plot_sharpe_ratio(stats):
     plt.tight_layout()
 
     plt.savefig("data/sharpe_ratio_chart.png")
+
+    plt.show()
 
     plt.close()
 
@@ -157,6 +160,8 @@ def plot_correlation_heatmap(correlation_matrix):
     plt.tight_layout()
 
     plt.savefig("data/correlation_heatmap.png")
+
+    plt.show()
 
     plt.close()
 
